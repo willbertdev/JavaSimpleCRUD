@@ -11,13 +11,20 @@ public class UserModel {
 
     public  UserModel() {}
 
-    public UserModel(String action, HashMap data) throws SQLException {
-        Connection con = DbConnection.connect();
+    public UserModel(String action, HashMap data, int id, String sql) throws SQLException {
 
         switch(action) {
             case "insert":
                 insert(data);
                 break;
+            case "update":
+                update(data, id);
+                break;
+            case "delete":
+                delete(id);
+                break;
+            case "read":
+                readAll(sql);
         }
     }
 
@@ -44,18 +51,23 @@ public class UserModel {
             try {
                 ps.close();
                 rs.close();
+                this.con.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-
         }
-        System.out.println(Arrays.toString(arrUser.get(1)));
+
+        arrUser.forEach((key, value) ->  {
+            System.out.println("Data " + (key+1) + ": " + Arrays.toString(value));
+        });
     }
 
     public void insert(HashMap data) throws SQLException {
         PreparedStatement ps = null;
         String sql = "INSERT INTO users(name, email) VALUES(?,?)";
         ps = this.con.prepareStatement(sql);
+
+        System.out.println(data.size());
 
         PreparedStatement finalPs = ps;
 
@@ -78,7 +90,7 @@ public class UserModel {
         });
 
         System.out.println("Inserted!");
-
+        this.con.close();
     }
 
     public void update(HashMap data, int id) {
@@ -92,16 +104,19 @@ public class UserModel {
             ps.setString(2, updateData[1]);
             ps.setString(3, String.valueOf(id));
             ps.execute();
-            System.out.println("Data updated in ID: " + id);
+
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
                 ps.close();
+                this.con.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+
+        System.out.println("Data updated in ID: " + id);
     }
 
     public void delete(int id) {
@@ -118,6 +133,7 @@ public class UserModel {
         } finally {
             try {
                 ps.close();
+                this.con.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }

@@ -13,7 +13,7 @@ public class DbConnection {
         try {
             Class.forName("org.sqlite.JDBC");
             con = DriverManager.getConnection("jdbc:sqlite:MyFirstSqlite.db");
-            System.out.println("connected!");
+            System.out.println("CONNECTED!");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {
